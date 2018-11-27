@@ -1,9 +1,10 @@
 // Core
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 // Instruments
 import Styles from './styles.m.css';
-import InitStyles from '../../theme/init.css';
+import taskTypes from '../../types/task';
 
 // Components
 import Checkbox from '../../theme/assets/Checkbox';
@@ -27,19 +28,33 @@ export default class Task extends PureComponent {
     render () {
         const { id, completed, favorite, message } = this._getTaskShape(this.props);
         return (
-            <li className = { Styles.task }>
+            <li className = { Styles.task } key={id}>
                 <div className={Styles.content}>
                     <div className={Styles.toggleTaskCompletedState}>
-                        <Checkbox checked={completed} color1="#3b8ef3" color2="#fff"/>
+                        <Checkbox
+                            checked={completed}
+                            color1="#3b8ef3"
+                            color2="#fff"/>
                     </div>
-                    <input disabled="true" maxlength="50" type="text" value="asdasd" />
+                    <input disabled="true" maxLength="50" type="text" value={message} />
                 </div>
                 <div className={Styles.actions}>
-                    <Star className={Styles.toggleTaskFavoriteState} inlineBlock />
-                    <Edit className={Styles.updateTaskMessageOnClick} inlineBlock />
-                    <Remove inlineBlock />
+                    <Star
+                        checked={favorite}
+                        className={Styles.toggleTaskFavoriteState}
+                        inlineBlock
+                    />
+                    <Edit
+                        className={Styles.updateTaskMessageOnClick}
+                        inlineBlock
+                    />
+                    <Remove
+                        inlineBlock
+                    />
                 </div>
             </li>
         );
     }
 }
+
+Task.propTypes = taskTypes;

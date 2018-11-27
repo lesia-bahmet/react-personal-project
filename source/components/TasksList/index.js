@@ -1,23 +1,27 @@
+// Core
 import React from 'react';
+import PropTypes from 'prop-types';
 
+// Instruments
+import taskTypes from '../../types/task';
+
+// Components
 import Task from './../Task';
 
 class TasksList extends React.PureComponent{
     render(){
         return (
-            <section>
-                <form>
-                    <input maxLength="50" placeholder="Описaние моей новой задачи" type="text" value="" />
-                    <button>Добавить задачу</button>
-                </form>
-                <div>
-                    <ul>
-                        <Task/>
-                    </ul>
-                </div>
-            </section>
+            <div>
+                <ul>
+                    {this.props.tasks.map((task) => <Task {...task} />)}
+                </ul>
+            </div>
         );
     }
 }
+
+TasksList.propTypes = {
+    tasks: PropTypes.arrayOf(PropTypes.shape(taskTypes)).isRequired
+};
 
 export default TasksList;
