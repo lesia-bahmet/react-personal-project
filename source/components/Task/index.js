@@ -13,6 +13,35 @@ import Edit from '../../theme/assets/Edit';
 import Remove from '../../theme/assets/Remove';
 
 export default class Task extends PureComponent {
+    state = {
+        isEditing: false,
+        message: '',
+    };
+
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(!prevState.message){
+            return { message: nextProps.message };
+        }
+        return null;
+    }
+
+    _setEditingState = () => {
+        const { isEditing, message } = this.state;
+        const { id, editTaskMessage } = this.props;
+
+        if(isEditing) editTaskMessage(id, message);
+
+        this.setState((prevState) => ({
+            isEditing: !prevState.isEditing
+        }));
+    };
+
+    _editMessage = event => {
+        this.setState({
+            message: event.target.value,
+        })
+    };
+
     _getTaskShape = ({
         id = this.props.id,
         completed = this.props.completed,
@@ -47,7 +76,8 @@ export default class Task extends PureComponent {
     };
 
     render () {
-        const { completed, favorite, message } = this._getTaskShape(...this.props);
+        const { completed, favorite, message } = this._getTaskShape(this.props);
+
         return (
             <li className = { Styles.task }>
                 <div className={Styles.content}>
@@ -59,10 +89,11 @@ export default class Task extends PureComponent {
                             color2="#fff"/>
                     </div>
                     <input
-                        disabled="true"
+                        onChange={this._editMessage}
+                        disabled={!this.state.isEditing}
                         maxLength="50"
                         type="text"
-                        value={message} />
+                        value={this.state.message} />
                 </div>
                 <div className={Styles.actions}>
                     <Star
@@ -72,6 +103,7 @@ export default class Task extends PureComponent {
                         inlineBlock
                     />
                     <Edit
+                        onClick={this._setEditingState}
                         className={Styles.updateTaskMessageOnClick}
                         inlineBlock
                     />

@@ -9,11 +9,6 @@ import taskTypes from '../../types/task';
 import Task from './../Task';
 
 class TasksList extends React.PureComponent{
-
-    _setEditedTaskId = () => {
-
-    };
-
     render(){
         const {
             editTaskMessage,
@@ -47,7 +42,7 @@ class TasksList extends React.PureComponent{
 
 TasksList.propTypes = {
     tasks: PropTypes.arrayOf(PropTypes.shape(taskTypes)).isRequired,
-    editTask: PropTypes.func.isRequired,
+    editTaskMessage: PropTypes.func.isRequired,
 };
 
 export default TasksList;

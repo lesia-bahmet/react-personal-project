@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 // Instruments
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
-import { BaseTaskModel } from '../../instruments';
+import { BaseTaskModel, sortTasksByGroup } from '../../instruments';
 
 // Components
 import Header from './../Header';
@@ -78,7 +78,7 @@ export default class Scheduler extends Component {
                     <section>
                         <TaskCreator addTask={this._addTask} />
                         <TaskList
-                            tasks={this.state.tasks}
+                            tasks={sortTasksByGroup(this.state.tasks)}
                             editTaskMessage={this._editTaskMessage}
                             markAsCompleted={this._markAsCompleted}
                             markAsFavorite={this._markAsFavorite}
