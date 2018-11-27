@@ -7,6 +7,7 @@ import { withSvg } from '../../instruments/withSvg';
 class Checkbox extends Component {
     render () {
         const { checked, color1, color2 } = this.props;
+        console.log(this.props);
 
         const fill = checked ? color1 : color2;
 
