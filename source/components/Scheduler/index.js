@@ -26,8 +26,48 @@ export default class Scheduler extends Component {
                 ...prevState.tasks
             ]
         }));
+    };
 
-        setTimeout(()=>this.state.task, 0);
+    _modifyTask = (id, field, value) => {
+        if(!id || !field || value === undefined) return;
+
+        this.setState({
+            tasks: this.state.tasks.map(task =>
+                task.id === id ?
+                    Object.assign({}, task, {[field]: value}) :
+                    task
+            ),
+        });
+    };
+
+    _editTaskMessage = (id, message = '') => {
+        if(!message.length) return;
+
+        this._modifyTask(id, 'message', message);
+    };
+
+    _markAsCompleted = id => {
+        this._modifyTask(id, 'completed', true);
+    };
+
+    _markAsFavorite = id => {
+        this._modifyTask(id, 'favorite', true);
+    };
+
+    _markAsUnCompleted = id => {
+        this._modifyTask(id, 'completed', false);
+    };
+
+    _markAsNotFavorite = id => {
+        this._modifyTask(id, 'favorite', false);
+    };
+
+    _removeTask = id => {
+        if(!id) return;
+
+        this.setState((prevState) => ({
+            tasks: [...prevState.tasks.filter(task => task.id !== id)]
+        }));
     };
 
     render () {
@@ -37,7 +77,15 @@ export default class Scheduler extends Component {
                     <Header/>
                     <section>
                         <TaskCreator addTask={this._addTask} />
-                        <TaskList tasks={this.state.tasks} />
+                        <TaskList
+                            tasks={this.state.tasks}
+                            editTaskMessage={this._editTaskMessage}
+                            markAsCompleted={this._markAsCompleted}
+                            markAsFavorite={this._markAsFavorite}
+                            markAsUnCompleted={this._markAsUnCompleted}
+                            markAsNotFavorite={this._markAsNotFavorite}
+                            removeTask={this._removeTask}
+                        />
                     </section>
                     <Footer/>
                 </main>

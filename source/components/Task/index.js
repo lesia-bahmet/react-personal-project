@@ -25,21 +25,48 @@ export default class Task extends PureComponent {
         message,
     });
 
+    _handleRemoveClick = () => {
+        const { id } = this.props;
+        this.props.removeTask(id);
+    };
+
+    _handleFavoriteChange = () => {
+        const { id } = this.props;
+
+        this.props.favorite ?
+            this.props.markAsNotFavorite(id) :
+            this.props.markAsFavorite(id);
+    };
+
+    _handleCompleteChange = () => {
+        const {id} = this.props;
+
+        this.props.completed ?
+            this.props.markAsUnCompleted(id):
+            this.props.markAsCompleted(id);
+    };
+
     render () {
-        const { id, completed, favorite, message } = this._getTaskShape(this.props);
+        const { completed, favorite, message } = this._getTaskShape(...this.props);
         return (
-            <li className = { Styles.task } key={id}>
+            <li className = { Styles.task }>
                 <div className={Styles.content}>
                     <div className={Styles.toggleTaskCompletedState}>
                         <Checkbox
+                            onClick={this._handleCompleteChange}
                             checked={completed}
                             color1="#3b8ef3"
                             color2="#fff"/>
                     </div>
-                    <input disabled="true" maxLength="50" type="text" value={message} />
+                    <input
+                        disabled="true"
+                        maxLength="50"
+                        type="text"
+                        value={message} />
                 </div>
                 <div className={Styles.actions}>
                     <Star
+                        onClick={this._handleFavoriteChange}
                         checked={favorite}
                         className={Styles.toggleTaskFavoriteState}
                         inlineBlock
@@ -49,6 +76,7 @@ export default class Task extends PureComponent {
                         inlineBlock
                     />
                     <Remove
+                        onClick={this._handleRemoveClick}
                         inlineBlock
                     />
                 </div>
@@ -57,4 +85,10 @@ export default class Task extends PureComponent {
     }
 }
 
-Task.propTypes = taskTypes;
+Task.propTypes = {
+    ...taskTypes,
+    markAsNotFavorite: PropTypes.func.isRequired,
+    markAsFavorite: PropTypes.func.isRequired,
+    markAsUnCompleted: PropTypes.func.isRequired,
+    markAsCompleted: PropTypes.func.isRequired,
+};

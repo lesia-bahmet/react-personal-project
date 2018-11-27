@@ -9,11 +9,36 @@ import taskTypes from '../../types/task';
 import Task from './../Task';
 
 class TasksList extends React.PureComponent{
+
+    _setEditedTaskId = () => {
+
+    };
+
     render(){
+        const {
+            editTaskMessage,
+            markAsCompleted,
+            markAsFavorite,
+            markAsUnCompleted,
+            markAsNotFavorite,
+            removeTask,
+        } = this.props;
+
         return (
             <div>
                 <ul>
-                    {this.props.tasks.map((task) => <Task {...task} />)}
+                    {this.props.tasks.map((task) =>
+                        <Task
+                            key={task.id}
+                            {...task}
+                            editTaskMessage={editTaskMessage}
+                            markAsCompleted={markAsCompleted}
+                            markAsFavorite={markAsFavorite}
+                            markAsUnCompleted={markAsUnCompleted}
+                            markAsNotFavorite={markAsNotFavorite}
+                            removeTask={removeTask}
+                        />
+                    )}
                 </ul>
             </div>
         );
@@ -21,7 +46,8 @@ class TasksList extends React.PureComponent{
 }
 
 TasksList.propTypes = {
-    tasks: PropTypes.arrayOf(PropTypes.shape(taskTypes)).isRequired
+    tasks: PropTypes.arrayOf(PropTypes.shape(taskTypes)).isRequired,
+    editTask: PropTypes.func.isRequired,
 };
 
 export default TasksList;
