@@ -17,27 +17,31 @@ export default class Scheduler extends Component {
         tasks: [],
     };
 
+    componentDidMount(){
+        api.fetchTasks()
+            .then(tasks => this.setState({ tasks }));
+    }
+
     _addTask = (message = '') => {
         if(!message.length) return;
 
-        this.setState(prevState => ({
-            tasks: [
-                Object.assign(new BaseTaskModel(), { message }),
-                ...prevState.tasks
-            ]
-        }));
+        api.createTask(message)
+            .then( task => this.setState(prevState => ({
+                tasks: [ task, ...prevState.tasks ]
+            })));
     };
 
     _modifyTask = (id, field, value) => {
         if(!id || !field || value === undefined) return;
 
-        this.setState({
-            tasks: this.state.tasks.map(task =>
-                task.id === id ?
-                    Object.assign({}, task, {[field]: value}) :
-                    task
-            ),
-        });
+        const task = this.state.tasks.find(task => task.id === id);
+
+        api.updateTask({...task, [field]: value})
+            .then(([updatedTask]) => this.setState({
+                tasks: this.state.tasks.map(task =>
+                    task.id === id ? updatedTask : task
+                ),
+            }));
     };
 
     _editTaskMessage = (id, message = '') => {
@@ -65,10 +69,21 @@ export default class Scheduler extends Component {
     _removeTask = id => {
         if(!id) return;
 
-        this.setState((prevState) => ({
-            tasks: [...prevState.tasks.filter(task => task.id !== id)]
-        }));
+        api.removeTask(id)
+            .then(()=>{
+                this.setState((prevState) => ({
+                    tasks: [...prevState.tasks.filter(task => task.id !== id)]
+                }));
+            });
     };
+    
+    _markAllTasksAsCompleted = () => {
+        api.completeAllTasks(this.state.tasks.map(task => ({
+            ...task, ['completed']: true,
+        }))).then((tasks) => this.setState({tasks: tasks}));
+    };
+
+    _isAllTasksCompleted = () => !this.state.tasks.find(task => !task.completed);
 
     render () {
         return (
@@ -87,7 +102,10 @@ export default class Scheduler extends Component {
                             removeTask={this._removeTask}
                         />
                     </section>
-                    <Footer/>
+                    <Footer
+                        isAllTasksCompleted={this._isAllTasksCompleted()}
+                        markAllTasksAsCompleted={this._markAllTasksAsCompleted}
+                    />
                 </main>
             </section>
         );
