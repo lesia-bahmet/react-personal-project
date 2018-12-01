@@ -11,33 +11,35 @@ import Header from './../Header';
 import TaskList from './../TasksList';
 import TaskCreator from './../TaskCreator';
 import Footer from './../Footer';
+import Spinner from './../Spinner';
 
 export default class Scheduler extends Component {
     state = {
         tasks: [],
         filterValue: '',
+        fetching: false,
     };
 
     componentDidMount(){
+        this.setState({fetching: true});
         api.fetchTasks()
-            .then(tasks => this.setState({ tasks }));
+            .then(tasks => this._updateAfterApiCall(tasks));
     }
 
-    componentDidUpdate(prevProps, prevState){
-        const { tasks, filtering } = this.props;
-
-        if(prevState.tasks !== tasks && !filtering) {
-            this.tasksBuffer = [...this.state.tasks];
-        }
-    }
+    _updateAfterApiCall = tasks => {
+        this.setState({
+            tasks,
+            fetching: false,
+        });
+    };
 
     _addTask = (message = '') => {
         if(!message.length) return;
 
+        this.setState({fetching: true});
+        const { tasks } = this.state;
         api.createTask(message)
-            .then( task => this.setState(prevState => ({
-                tasks: [ task, ...prevState.tasks ]
-            })));
+            .then( task => this._updateAfterApiCall([ task, ...tasks ]));
     };
 
     _modifyTask = (id, field, value) => {
@@ -45,12 +47,11 @@ export default class Scheduler extends Component {
 
         const task = this.state.tasks.find(task => task.id === id);
 
+        this.setState({fetching: true});
         api.updateTask({...task, [field]: value})
-            .then(([updatedTask]) => this.setState({
-                tasks: this.state.tasks.map(task =>
-                    task.id === id ? updatedTask : task
-                ),
-            }));
+            .then(([updatedTask]) => this._updateAfterApiCall(
+                this.state.tasks.map(task => task.id === id ? updatedTask : task
+            )));
     };
 
     _editTaskMessage = (id, message = '') => {
@@ -78,18 +79,19 @@ export default class Scheduler extends Component {
     _removeTask = id => {
         if(!id) return;
 
+        this.setState({fetching: true});
+        const { tasks } = this.state;
         api.removeTask(id)
             .then(()=>{
-                this.setState((prevState) => ({
-                    tasks: [...prevState.tasks.filter(task => task.id !== id)]
-                }));
+                this._updateAfterApiCall([...tasks.filter(task => task.id !== id)])
             });
     };
     
     _markAllTasksAsCompleted = () => {
+        this.setState({fetching: true});
         api.completeAllTasks(this.state.tasks.map(task => ({
             ...task, ['completed']: true,
-        }))).then((tasks) => this.setState({tasks: tasks}));
+        }))).then((tasks) => this._updateAfterApiCall(tasks));
     };
 
     _isAllTasksCompleted = () => !this.state.tasks.find(task => !task.completed);
@@ -112,6 +114,7 @@ export default class Scheduler extends Component {
         return (
             <section className = { Styles.scheduler }>
                 <main>
+                    {this.state.fetching ? <Spinner/> : null}
                     <Header
                         setFilterValue={this._setFilterValue}
                     />
