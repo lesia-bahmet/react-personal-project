@@ -1,30 +1,30 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-class Header extends React.PureComponent{
+class Header extends React.PureComponent {
     state = {
-        value: '',
+        value: "",
     };
-    
-    _handleChange = event => {
+
+    _handleChange = (event) => {
         const { value } = event.target;
 
-        this.setState({value});
-        this.props.setFilterValue(value)
+        this.setState({ value });
+        this.props.setFilterValue(value);
     };
 
-    render() {
+    render () {
         return (
             <header>
                 <h1>Планировщик задач</h1>
                 <input
-                    onChange={this._handleChange}
-                    placeholder="Поиск"
-                    type="search"
-                    value={this.state.text}
+                    onChange = { this._handleChange }
+                    placeholder = 'Поиск'
+                    type = 'search'
+                    value = { this.state.text }
                 />
             </header>
-        )
+        );
     }
 }
 

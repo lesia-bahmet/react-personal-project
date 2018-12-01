@@ -1,40 +1,39 @@
 // Core
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class TaskCreator extends React.Component {
     state = {
         message: this.defaultMessage,
     };
-    defaultMessage = '';
+    defaultMessage = "";
 
-    _handleClick = event => {
+    _handleClick = (event) => {
         event.preventDefault();
 
         this.props.addTask(this.state.message);
-        this.setState({message: this.defaultMessage});
+        this.setState({ message: this.defaultMessage });
     };
 
-    _handleChange = event => {
+    _handleChange = (event) => {
         this.setState({
             message: event.target.value,
-        })
+        });
     };
 
-    render(){
+    render () {
         const { message } = this.state;
+
         return (
             <form>
                 <input
-                    type="text"
-                    placeholder="Описaние моей новой задачи"
-                    maxLength="50"
-                    value={message}
-                    onChange={this._handleChange}
+                    maxLength = '50'
+                    onChange = { this._handleChange }
+                    placeholder = 'Описaние моей новой задачи'
+                    type = 'text'
+                    value = { message }
                 />
-                <button onClick={this._handleClick}>
-                    Добавить задачу
-                </button>
+                <button onClick = { this._handleClick }>Добавить задачу</button>
             </form>
         );
     }

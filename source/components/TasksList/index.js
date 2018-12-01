@@ -1,15 +1,15 @@
 // Core
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 // Instruments
-import taskTypes from '../../types/task';
+import taskTypes from "../../types/task";
 
 // Components
-import Task from './../Task';
+import Task from "./../Task";
 
-class TasksList extends React.PureComponent{
-    render(){
+class TasksList extends React.PureComponent {
+    render () {
         const {
             editTaskMessage,
             markAsCompleted,
@@ -22,18 +22,18 @@ class TasksList extends React.PureComponent{
         return (
             <div>
                 <ul>
-                    {this.props.tasks.map((task) =>
+                    {this.props.tasks.map((task) => (
                         <Task
-                            key={task.id}
-                            {...task}
-                            editTaskMessage={editTaskMessage}
-                            markAsCompleted={markAsCompleted}
-                            markAsFavorite={markAsFavorite}
-                            markAsUnCompleted={markAsUnCompleted}
-                            markAsNotFavorite={markAsNotFavorite}
-                            removeTask={removeTask}
+                            key = { task.id }
+                            { ...task }
+                            editTaskMessage = { editTaskMessage }
+                            markAsCompleted = { markAsCompleted }
+                            markAsFavorite = { markAsFavorite }
+                            markAsNotFavorite = { markAsNotFavorite }
+                            markAsUnCompleted = { markAsUnCompleted }
+                            removeTask = { removeTask }
                         />
-                    )}
+                    ))}
                 </ul>
             </div>
         );
@@ -41,7 +41,7 @@ class TasksList extends React.PureComponent{
 }
 
 TasksList.propTypes = {
-    tasks: PropTypes.arrayOf(PropTypes.shape(taskTypes)).isRequired,
+    tasks:           PropTypes.arrayOf(PropTypes.shape(taskTypes)).isRequired,
     editTaskMessage: PropTypes.func.isRequired,
 };
 

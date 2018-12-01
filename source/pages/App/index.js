@@ -1,13 +1,13 @@
 // Core
-import React, { Component } from 'react';
-import { hot } from 'react-hot-loader';
+import React, { Component } from "react";
+import { hot } from "react-hot-loader";
 
-import Task from './../../components/Task';
-import Scheduler from './../../components/Scheduler';
+import Task from "./../../components/Task";
+import Scheduler from "./../../components/Scheduler";
 
 @hot(module)
 export default class App extends Component {
     render () {
-        return <Scheduler />
+        return <Scheduler />;
     }
 }
