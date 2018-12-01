@@ -17,12 +17,17 @@ export default class Task extends PureComponent {
         isEditing: false,
         message: '',
     };
+    taskInput = React.createRef();
 
     static getDerivedStateFromProps(nextProps, prevState){
         if(!prevState.message){
             return { message: nextProps.message };
         }
         return null;
+    }
+
+    componentDidUpdate(){
+
     }
 
     _setEditingState = () => {
@@ -33,7 +38,13 @@ export default class Task extends PureComponent {
 
         this.setState((prevState) => ({
             isEditing: !prevState.isEditing
-        }));
+        }), this._setFocus);
+    };
+
+    _setFocus = () => {
+        if(!this.state.isEditing) return;
+
+        this.taskInput.current.focus();
     };
 
     _editMessage = event => {
@@ -89,6 +100,7 @@ export default class Task extends PureComponent {
                             color2="#fff"/>
                     </div>
                     <input
+                        ref={this.taskInput}
                         onChange={this._editMessage}
                         disabled={!this.state.isEditing}
                         maxLength="50"
