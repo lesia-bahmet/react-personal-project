@@ -8,6 +8,7 @@ import taskTypes from '../../types/task';
 
 // Components
 import Checkbox from '../../theme/assets/Checkbox';
+import TaskInput from '../TaskInput';
 import Star from '../../theme/assets/Star';
 import Edit from '../../theme/assets/Edit';
 import Remove from '../../theme/assets/Remove';
@@ -17,7 +18,6 @@ export default class Task extends PureComponent {
         isEditing: false,
         message: '',
     };
-    taskInput = React.createRef();
 
     static getDerivedStateFromProps(nextProps, prevState){
         if(!prevState.message){
@@ -26,31 +26,10 @@ export default class Task extends PureComponent {
         return null;
     }
 
-    componentDidUpdate(){
-
-    }
-
-    _setEditingState = () => {
-        const { isEditing, message } = this.state;
-        const { id, editTaskMessage } = this.props;
-
-        if(isEditing) editTaskMessage(id, message);
-
-        this.setState((prevState) => ({
-            isEditing: !prevState.isEditing
-        }), this._setFocus);
-    };
-
-    _setFocus = () => {
-        if(!this.state.isEditing) return;
-
-        this.taskInput.current.focus();
-    };
-
-    _editMessage = event => {
-        this.setState({
-            message: event.target.value,
-        })
+    _setEditingState = state => {
+        this.setState((prevState => ({
+            isEditing: state === undefined ? !prevState.isEditing : state,
+        })));
     };
 
     _getTaskShape = ({
@@ -64,6 +43,10 @@ export default class Task extends PureComponent {
         favorite,
         message,
     });
+    
+    _handleEditClick = () => {
+        this._setEditingState();
+    };
 
     _handleRemoveClick = () => {
         const { id } = this.props;
@@ -85,6 +68,10 @@ export default class Task extends PureComponent {
             this.props.markAsUnCompleted(id):
             this.props.markAsCompleted(id);
     };
+    
+    _editMessage = message => {
+        this.props.editTaskMessage(this.props.id, message);
+    };
 
     render () {
         const { completed, favorite, message } = this._getTaskShape(this.props);
@@ -99,13 +86,12 @@ export default class Task extends PureComponent {
                             color1="#3b8ef3"
                             color2="#fff"/>
                     </div>
-                    <input
-                        ref={this.taskInput}
-                        onChange={this._editMessage}
-                        disabled={!this.state.isEditing}
-                        maxLength="50"
-                        type="text"
-                        value={this.state.message} />
+                    <TaskInput
+                        isEditing={this.state.isEditing}
+                        setEditingState={this._setEditingState}
+                        editMessage={this._editMessage}
+                        message={message}
+                    />
                 </div>
                 <div className={Styles.actions}>
                     <Star
@@ -115,7 +101,7 @@ export default class Task extends PureComponent {
                         inlineBlock
                     />
                     <Edit
-                        onClick={this._setEditingState}
+                        onClick={this._handleEditClick}
                         className={Styles.updateTaskMessageOnClick}
                         inlineBlock
                     />
