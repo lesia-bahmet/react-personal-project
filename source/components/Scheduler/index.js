@@ -15,11 +15,20 @@ import Footer from './../Footer';
 export default class Scheduler extends Component {
     state = {
         tasks: [],
+        filterValue: '',
     };
 
     componentDidMount(){
         api.fetchTasks()
             .then(tasks => this.setState({ tasks }));
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        const { tasks, filtering } = this.props;
+
+        if(prevState.tasks !== tasks && !filtering) {
+            this.tasksBuffer = [...this.state.tasks];
+        }
     }
 
     _addTask = (message = '') => {
@@ -85,15 +94,31 @@ export default class Scheduler extends Component {
 
     _isAllTasksCompleted = () => !this.state.tasks.find(task => !task.completed);
 
+    _filterTasks = () => {
+        const { filterValue, tasks } = this.state;
+
+        return sortTasksByGroup(
+            filterValue.length ?
+            tasks.filter(task => task.message.includes(filterValue)) :
+            tasks
+        );
+    };
+    
+    _setFilterValue = value => {
+        this.setState({filterValue: value});
+    };
+
     render () {
         return (
             <section className = { Styles.scheduler }>
                 <main>
-                    <Header/>
+                    <Header
+                        setFilterValue={this._setFilterValue}
+                    />
                     <section>
                         <TaskCreator addTask={this._addTask} />
                         <TaskList
-                            tasks={sortTasksByGroup(this.state.tasks)}
+                            tasks={this._filterTasks()}
                             editTaskMessage={this._editTaskMessage}
                             markAsCompleted={this._markAsCompleted}
                             markAsFavorite={this._markAsFavorite}
